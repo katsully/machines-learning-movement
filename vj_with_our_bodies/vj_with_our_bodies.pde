@@ -1,48 +1,32 @@
-/*
-Kat Sullivan
-ITP Camp 2017
-github.com/katsully
- */
-
-import KinectPV2.KJoint;
 import KinectPV2.*;
+import oscP5.*;
+import netP5.*;
 
+OscP5 oscp5;
+NetAddress myRemoteLocation;
 KinectPV2 kinect;
-
-// where we will store the data
-Table table;
-String[] bones = { "SpineBase", "SpineMid", "Neck", "Head", "ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft",
-    "ShoulderRight", "ElbowRight", "WristRight", "HandRight", "HipLeft", "KneeLeft", "AnkleLeft", "FootLeft", "HipRight", "KneeRight",
-    "AnkleRight", "FootRight", "SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight" };
-
-boolean recording = false;
-boolean saved = false;
-Integer poseNum;
 
 float zVal = 1000;
 float rotX = PI;
 
-void setup() {
+boolean showBody = true;
+
+void setup(){
   size(1024, 768, P3D);
   
-  table = new Table();
-
-   for(String s: bones) {
-     table.addColumn(s+"_x");
-     table.addColumn(s+"_y");
-     table.addColumn(s+"_z");
-     table.addColumn(s+"_Orientation_w");
-     table.addColumn(s+"_Orientation_x");
-     table.addColumn(s+"_Orientation_y");
-     table.addColumn(s+"_Orientation_z");
-   }
-
-  kinect = new KinectPV2(this);
-
-  //enable 3d  with (x,y,z) position
+  kinect = new KinectPV2(this); 
   kinect.enableSkeleton3DMap(true);
-
   kinect.init();
+  
+  oscp5 = new OscP5(this, 9000);
+  // localhost
+  myRemoteLocation = new NetAddress("127.0.0.1", 8000);
+}
+
+void oscEvent(OscMessage message) {
+  println("##received message##");
+  println(message.addrPattern());
+  println(message.typetag());
 }
 
 void draw() {
@@ -70,10 +54,10 @@ void draw() {
       color col  = skeleton.getIndexColor();
       stroke(col);
       strokeWeight(.01);
-      drawBody(joints);
-      if(recording) {
-        recordData(joints);
-      }
+      if(showBody) {
+        drawBody(joints);
+      } 
+      sendData(joints);
     }
   }
   popMatrix();
@@ -82,15 +66,6 @@ void draw() {
   fill(255, 0, 0);
   // extremely basic interface to let the user know when they're recording
   // when the file is saved, etc
-  if(saved) {
-    text("FILE SAVED", width-100, 50);
-  }
-  if(recording) {
-    text("RECORDING",50, 50);
-  }
-  if(poseNum != null) {
-    text("POSE NUMBER: " + poseNum, 50, 100);
-  }
 }
 
 void drawBody(KJoint[] joints) {
@@ -169,39 +144,20 @@ void handState(int handState) {
   }
 }
 
-void recordData(KJoint[] joints){
-  TableRow newRow = table.addRow();
+void sendData(KJoint[] joints){
+  OscMessage newMessage = new OscMessage("/skeletal_data");
   for(int i=0; i<joints.length-1; i++){
-    newRow.setFloat(bones[i] + "_x", joints[i].getX());
-    newRow.setFloat(bones[i] + "_y", joints[i].getY());
-    newRow.setFloat(bones[i] + "_z", joints[i].getZ());
-    newRow.setFloat(bones[i] + "_Orientation_w", joints[i].getOrientation().getW());
-    newRow.setFloat(bones[i] + "_Orientation_x", joints[i].getOrientation().getX());
-    newRow.setFloat(bones[i] + "_Orientation_y", joints[i].getOrientation().getY());
-    newRow.setFloat(bones[i] + "_Orientation_z", joints[i].getOrientation().getZ());
+    newMessage.add(joints[i].getX());
+    newMessage.add(joints[i].getY());
+    newMessage.add(joints[i].getZ());
+    newMessage.add(joints[i].getOrientation().getW());
+    newMessage.add(joints[i].getOrientation().getX());
+    newMessage.add(joints[i].getOrientation().getY());
+    newMessage.add(joints[i].getOrientation().getZ());
   }
+  oscp5.send(newMessage, myRemoteLocation);
 }
 
 void keyPressed(){
-  // save the table
-  if(key == 's') {
-    saveTable(table, "data/test.csv");
-    saved = true;
-  } else if(key == 'r') {
-    recording = !recording;
-    TableRow newRow = table.addRow(); 
-    newRow.setString("SpineBase_x", "NEW RECORDING"); 
-  } else if(key == '1') {
-    poseNum = 1;
-    TableRow newRow = table.addRow();
-    newRow.setString("SpineBase_x", "POSE 1");
-  } else if(key == '2') {
-    poseNum = 2;
-    TableRow newRow = table.addRow();
-    newRow.setString("SpineBase_x", "POSE 2");
-  } else if(key == '3') {
-    poseNum = 3;
-    TableRow newRow = table.addRow();
-    newRow.setString("SpineBase_x", "POSE 3");
-  }
 }
+  
