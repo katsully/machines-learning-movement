@@ -1,0 +1,192 @@
+/*
+Kat Sullivan
+ITP Camp 2017
+github.com/katsully
+ */
+
+import KinectPV2.KJoint;
+import KinectPV2.*;
+
+KinectPV2 kinect;
+
+// where we will store the data
+Table table;
+
+boolean recording = false;
+boolean saved = false;
+Integer poseNum;
+
+float zVal = 1000;
+float rotX = PI;
+
+void setup() {
+  size(1024, 768, P3D);
+  
+  table = new Table();
+
+  String[] bones = { "SpineBase", "SpineMid", "Neck", "Head", "ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft",
+    "ShoulderRight", "ElbowRight", "WristRight", "HandRight", "HipLeft", "KneeLeft", "AnkleLeft", "FootLeft", "HipRight", "KneeRight",
+    "AnkleRight", "FootRight", "SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight" };
+   for(String s: bones) {
+     table.addColumn(s+"_x");
+     table.addColumn(s+"_y");
+     table.addColumn(s+"_z");
+     table.addColumn(s+"_Orientation_w");
+     table.addColumn(s+"Orientation_x");
+     table.addColumn(s+"Orientation_y");
+     table.addColumn(s+"Orientation_z");
+   }
+
+  kinect = new KinectPV2(this);
+
+  //enable 3d  with (x,y,z) position
+  kinect.enableSkeleton3DMap(true);
+
+  kinect.init();
+}
+
+void draw() {
+  background(0);
+
+  //translate the scene to the center 
+  pushMatrix();
+  translate(width/2, height/2, 0);
+  scale(zVal);
+  rotateX(rotX);
+
+  ArrayList<KSkeleton> skeletonArray =  kinect.getSkeleton3d();
+
+  //individual JOINTS
+  for (int i = 0; i < skeletonArray.size(); i++) {
+    KSkeleton skeleton = (KSkeleton) skeletonArray.get(i);
+    if (skeleton.isTracked()) {
+      KJoint[] joints = skeleton.getJoints();
+
+      //draw different color for each hand state
+      drawHandState(joints[KinectPV2.JointType_HandRight]);
+      drawHandState(joints[KinectPV2.JointType_HandLeft]);
+
+      //Draw body
+      color col  = skeleton.getIndexColor();
+      stroke(col);
+      strokeWeight(.01);
+      drawBody(joints);
+    }
+  }
+  popMatrix();
+
+
+  fill(255, 0, 0);
+  // extremely basic interface to let the user know when they're recording
+  // when the file is saved, etc
+  if(saved) {
+    text("FILE SAVED", width-100, 50);
+  }
+  if(recording) {
+    text("RECORDING",50, 50);
+  }
+  if(poseNum != null) {
+    text("POSE NUMBER: " + poseNum, 50, 100);
+  }
+}
+
+void drawBody(KJoint[] joints) {
+  drawBone(joints, KinectPV2.JointType_Head, KinectPV2.JointType_Neck);
+  drawBone(joints, KinectPV2.JointType_Neck, KinectPV2.JointType_SpineShoulder);
+  drawBone(joints, KinectPV2.JointType_SpineShoulder, KinectPV2.JointType_SpineMid);
+
+  drawBone(joints, KinectPV2.JointType_SpineMid, KinectPV2.JointType_SpineBase);
+  drawBone(joints, KinectPV2.JointType_SpineShoulder, KinectPV2.JointType_ShoulderRight);
+  drawBone(joints, KinectPV2.JointType_SpineShoulder, KinectPV2.JointType_ShoulderLeft);
+  drawBone(joints, KinectPV2.JointType_SpineBase, KinectPV2.JointType_HipRight);
+  drawBone(joints, KinectPV2.JointType_SpineBase, KinectPV2.JointType_HipLeft);
+
+  // Right Arm    
+  drawBone(joints, KinectPV2.JointType_ShoulderRight, KinectPV2.JointType_ElbowRight);
+  drawBone(joints, KinectPV2.JointType_ElbowRight, KinectPV2.JointType_WristRight);
+  drawBone(joints, KinectPV2.JointType_WristRight, KinectPV2.JointType_HandRight);
+  drawBone(joints, KinectPV2.JointType_HandRight, KinectPV2.JointType_HandTipRight);
+  drawBone(joints, KinectPV2.JointType_WristRight, KinectPV2.JointType_ThumbRight);
+
+  // Left Arm
+  drawBone(joints, KinectPV2.JointType_ShoulderLeft, KinectPV2.JointType_ElbowLeft);
+  drawBone(joints, KinectPV2.JointType_ElbowLeft, KinectPV2.JointType_WristLeft);
+  drawBone(joints, KinectPV2.JointType_WristLeft, KinectPV2.JointType_HandLeft);
+  drawBone(joints, KinectPV2.JointType_HandLeft, KinectPV2.JointType_HandTipLeft);
+  drawBone(joints, KinectPV2.JointType_WristLeft, KinectPV2.JointType_ThumbLeft);
+
+  // Right Leg
+  drawBone(joints, KinectPV2.JointType_HipRight, KinectPV2.JointType_KneeRight);
+  drawBone(joints, KinectPV2.JointType_KneeRight, KinectPV2.JointType_AnkleRight);
+  drawBone(joints, KinectPV2.JointType_AnkleRight, KinectPV2.JointType_FootRight);
+
+  // Left Leg
+  drawBone(joints, KinectPV2.JointType_HipLeft, KinectPV2.JointType_KneeLeft);
+  drawBone(joints, KinectPV2.JointType_KneeLeft, KinectPV2.JointType_AnkleLeft);
+  drawBone(joints, KinectPV2.JointType_AnkleLeft, KinectPV2.JointType_FootLeft);
+
+  drawJoint(joints, KinectPV2.JointType_HandTipLeft);
+  drawJoint(joints, KinectPV2.JointType_HandTipRight);
+  drawJoint(joints, KinectPV2.JointType_FootLeft);
+  drawJoint(joints, KinectPV2.JointType_FootRight);
+
+  drawJoint(joints, KinectPV2.JointType_ThumbLeft);
+  drawJoint(joints, KinectPV2.JointType_ThumbRight);
+
+  drawJoint(joints, KinectPV2.JointType_Head);
+}
+
+void drawJoint(KJoint[] joints, int jointType) {
+  point(joints[jointType].getX(), joints[jointType].getY(), joints[jointType].getZ());
+}
+
+void drawBone(KJoint[] joints, int jointType1, int jointType2) {
+  point(joints[jointType2].getX(), joints[jointType2].getY(), joints[jointType2].getZ());
+}
+
+void drawHandState(KJoint joint) {
+  handState(joint.getState());
+  point(joint.getX(), joint.getY(), joint.getZ());
+}
+
+void handState(int handState) {
+  switch(handState) {
+  case KinectPV2.HandState_Open:
+    stroke(0, 255, 0);
+    break;
+  case KinectPV2.HandState_Closed:
+    stroke(255, 0, 0);
+    break;
+  case KinectPV2.HandState_Lasso:
+    stroke(0, 0, 255);
+    break;
+  case KinectPV2.HandState_NotTracked:
+    stroke(100, 100, 100);
+    break;
+  }
+}
+
+// called whenever the sketch is closed
+void keyPressed(){
+  // save the table
+  if(key == 's') {
+    saveTable(table, "data/test.csv");
+    saved = true;
+  } else if(key == 'r') {
+    recording = !recording;
+    TableRow newRow = table.addRow();
+    newRow.setString("SpineBase_x", "NEW RECORDING"); 
+  } else if(key == '1') {
+    poseNum = 1;
+    TableRow newRow = table.addRow();
+    newRow.setString("SpineBase_x", "POSE 1");
+  } else if(key == '2') {
+    poseNum = 2;
+    TableRow newRow = table.addRow();
+    newRow.setString("SpineBase_x", "POSE 2");
+  } else if(key == '3') {
+    poseNum = 3;
+    TableRow newRow = table.addRow();
+    newRow.setString("SpineBase_x", "POSE 3");
+  }
+}
