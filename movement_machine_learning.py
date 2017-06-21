@@ -32,10 +32,10 @@ with open('KinectRecordingMovement/data/test.csv', 'rb') as inp:
 		if hasNumbers(row[0]) and "POSE" not in row[0]:
 			# get test data
 			if random.randint(0,100) < 10:
-				test_data.append(row[:-1])
+				test_data.append(row[:])
 				test_poses.append(currPose)
 			else:
-				features.append(row[:-1])
+				features.append(row[:])
 				labels.append(currPose)
 		if "POSE" in row[0]:
 			currPose = row[0];
