@@ -8,8 +8,9 @@ import time
 import random
 
 def print_click(*params):
-	poses = list(params[2:])
-	#print (body_language)
+	poses = list(params[2:-1])
+	poses = poses
+	print (poses)
 	prediction  = clf.predict(poses)
 	msg = osc_message_builder.OscMessageBuilder(address="/prediction")
 	pred_string = str(prediction[0], 'utf-8')

@@ -154,8 +154,10 @@ void sendData(KJoint[] joints){
     newMessage.add(joints[i].getOrientation().getX());
     newMessage.add(joints[i].getOrientation().getY());
     newMessage.add(joints[i].getOrientation().getZ());
+    println(joints[i].getOrientation().getZ());
   }
   oscp5.send(newMessage, myRemoteLocation);
+  println(newMessage);
 }
 
 void keyPressed(){
