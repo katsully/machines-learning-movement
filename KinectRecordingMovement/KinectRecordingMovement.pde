@@ -6,6 +6,7 @@ github.com/katsully
 
 import KinectPV2.KJoint;
 import KinectPV2.*;
+import java.util.Date;
 
 KinectPV2 kinect;
 
@@ -18,6 +19,9 @@ String[] bones = { "SpineBase", "SpineMid", "Neck", "Head", "ShoulderLeft", "Elb
 boolean recording = false;
 boolean saved = false;
 Integer poseNum;
+
+// we'll use this to timestamp our spreadsheet
+Date date = new Date();
 
 float zVal = 1000;
 float rotX = PI;
@@ -183,9 +187,9 @@ void recordData(KJoint[] joints){
 }
 
 void keyPressed(){
-  // save the table
   if(key == 's') {
-    saveTable(table, "data/test.csv");
+    // save the table and give it a timestamp
+    saveTable(table, "data/test" + date.getTime() +".csv");
     saved = true;
   } else if(key == 'r') {
     recording = !recording;
