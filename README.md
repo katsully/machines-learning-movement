@@ -47,6 +47,9 @@ pip install -U scikit-learn
 
 To install numpy+mlk libraries download the numpy+mkl [file](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy). Again cd into downloads and pip install numpy‑1.11.3+mkl‑cp27‑cp27m‑win_amd64.whl
 
+**If you get an error filename.whl is not supported wheel on this platform, rename the file to numpy‑1.11.3+mkl‑cp27‑none-any.whl and rerun pip install.
+
+
 You'll also want to install scipy. To do so, download the whl file [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy) I downloaded the 64 bit for Python 2.7. Then cd into downloads and pip install scipy-0.19.1-cp27-cp27m-win_amd64.whl
 
 
@@ -57,13 +60,13 @@ For Python, we'll need Python 3.4+. Go to the downloads of Python, download 3.5,
 
 When you do python --version you'll get 2.7 and when you do python3 --version you'll get 3.5. From now on we'll be using python3.
 
-To use the pythonosc libray do ```pip install python-osc```
+To use the pythonosc libray do ```python3 -m pip install python-osc```
 
-```python3 -m pip install sklearn```
-
-To install numpy+mlk libraries download the numpy+mkl [file](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy). cd into downloads and ```python3 -m pip install numpy‑1.11.3+mkl‑cp36‑cp35m-win_amd64.whl```
+To install numpy+mlk libraries download the numpy+mkl [file](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy). cd into downloads and ```python3 -m pip install numpy‑1.11.3+mkl‑cp35‑cp35m-win_amd64.whl```
 
 You'll also want to install scipy. To do so, download the whl file [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy) I downloaded the 64 bit for Python 3.5. Then cd into downloads and ```python3 -m pip install scipy-0.15.1-cp35-cp35m-win_amd64.whl```
+
+```python3 -m pip install sklearn```
 
 
 
