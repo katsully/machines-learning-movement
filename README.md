@@ -27,6 +27,7 @@ Today we will accomplish the following:
 Already feel a little lost? It's ok, just roll with it. Today is a day to try something new, make mistakes (or completely mess up), and get out of your confort zone! This will be very technical (which is why I included all the code), but don't forget to have fun and don't be afraid to get a little creative with the instructions!
 
 ### Step 1: Processing & the Kinnect
+For this step we'll be using KinectRecordingMovement file.
 
 We'll be using the Kinect 2 for this part so you'll need a Windows computer and [Processing](https://processing.org/download/). You'll also need the KinectPV2 library which can be installed in the Processing IDE by going to Sketch->Install Library.
 
@@ -54,6 +55,8 @@ You'll also want to install scipy. To do so, download the whl file [here](http:/
 
 
 ### Step 3: Make something cool!
+For this step we'll be using the files
+
 For the processing sketch you'll want to install the oscp5 library, which you can do via Sketch->Install Library.
 
 For Python, we'll need Python 3.4+. Go to the downloads of Python, download 3.5, NOT 3.6. Use the executable and click the option to add to path. cd to where Python35 is installed and change python.exe to python3.exe
