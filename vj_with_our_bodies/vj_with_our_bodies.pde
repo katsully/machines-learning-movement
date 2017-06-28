@@ -9,6 +9,8 @@ KinectPV2 kinect;
 float zVal = 1000;
 float rotX = PI;
 
+String pose ;
+
 boolean showBody = true;
 
 void setup(){
@@ -25,6 +27,13 @@ void setup(){
 
 void oscEvent(OscMessage message) {
   println("##received message##");
+  if(message.checkAddrPattern("/prediction") == true) {
+    println("IM HEREEEEEE");
+    println(message.get(0));
+     //come on and work: 
+    pose = message.get(0).stringValue();
+    return;
+  }
   println(message.addrPattern());
   println(message.typetag());
 }
