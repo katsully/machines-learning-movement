@@ -27,11 +27,9 @@ Today we will accomplish the following:
 Already feel a little lost? It's ok, just roll with it. Today is a day to try something new, make mistakes (or completely mess up), and get out of your confort zone! This will be very technical (which is why I included all the code), but don't forget to have fun and don't be afraid to get a little creative with the instructions!
 
 ### Step 1: Processing & the Kinnect
-For this step we'll be using KinectRecordingMovement file.
+For this step we'll be using KinectRecordingMovement.pde file inside the KinectRecordingMovement folder. Make sure to download the entire folder, not just the file!
 
 We'll be using the Kinect 2 for this part so you'll need a Windows computer and [Processing](https://processing.org/download/). You'll also need the KinectPV2 library which can be installed in the Processing IDE by going to Sketch->Install Library.
-
-We'll be using the KinectRecord files for this part.
 
 **Note, when running this Processing sketch, it might take a minute or two before you see anything.
 
