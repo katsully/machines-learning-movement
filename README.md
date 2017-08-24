@@ -34,6 +34,9 @@ We'll be using the Kinect 2 for this part so you'll need a Windows computer and 
 **Note, when running this Processing sketch, it might take a minute or two before you see anything.
 
 ### Step 2: Let the Machine Learn!
+First, we need to make sure Python has been installed. (This is only for Window users, Python comes standard in Mac).
+Open the Command Prompt and type Python. If it says Python 2.7.13 ...., you're all set! If not, please download [Python](https://www.python.org/downloads/).
+
 (This has only been tested on Python2.7)
 For this step we'll be using the movement_machine_learning.py file.
 
@@ -42,7 +45,7 @@ For window users you'll need the get\_pip.py file if you don't already have pip 
 Once this is complete add C:\Python27\Scripts to your PATH, then close and reopen your terminal.
 
 In terminal type
-pip install -U scikit-learn
+```python -m pip install scikit-learn```
 
 To install numpy+mlk libraries download the numpy+mkl [file](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy). Again cd into downloads and pip install numpy‑1.11.3+mkl‑cp27‑cp27m‑win_amd64.whl
 
