@@ -20,7 +20,7 @@ def print_click(*params):
 	client.send(msg)
 
 if __name__ == "__main__":
-	clf = joblib.load('machinelearning.pkl')
+	clf = joblib.load('/classifer/machinelearning.pkl')
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--ip", default="127.0.0.1",
