@@ -1,7 +1,7 @@
 /*
 Kat Sullivan
-ITP Camp 2017
-github.com/katsully
+ Brooklyn Research 2017
+ github.com/katsully
  */
 
 import KinectPV2.KJoint;
@@ -13,40 +13,44 @@ KinectPV2 kinect;
 // where we will store the data
 Table table;
 
-// a list of all points in the body that the Kinect tracks 
-String[] bones = { "SpineBase", "SpineMid", "Neck", "Head", "ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft",
-    "ShoulderRight", "ElbowRight", "WristRight", "HandRight", "HipLeft", "KneeLeft", "AnkleLeft", "FootLeft", "HipRight", "KneeRight",
-    "AnkleRight", "FootRight", "SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight" };
+// a list of all points in the body that the Kinect tracks
+String[] bones = { "SpineBase", "SpineMid", "Neck", "Head", "ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft", 
+  "ShoulderRight", "ElbowRight", "WristRight", "HandRight", "HipLeft", "KneeLeft", "AnkleLeft", "FootLeft", "HipRight", "KneeRight", 
+  "AnkleRight", "FootRight", "SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight" };
 
 // this will be used to let us know when we are recording
 boolean recording = false;
 
-// this will be used to let us know when we have saved the data
+// this will be used to let us know when we have saved the file
 boolean saved = false;
+
 Integer poseNum;
 
 // we'll use this to timestamp our spreadsheet
 Date date = new Date();
 
-float zVal = 1000;
+int depth = 600;
+float zVal = 1;
 float rotX = PI;
 
 void setup() {
   size(1024, 768, P3D);
-  
+
   table = new Table();
 
-   for(String s: bones) {
-     table.addColumn(s+"_x");
-     table.addColumn(s+"_y");
-     table.addColumn(s+"_z");
-     table.addColumn(s+"_Orientation_w");
-     table.addColumn(s+"_Orientation_x");
-     table.addColumn(s+"_Orientation_y");
-     table.addColumn(s+"_Orientation_z");
-   }
+  for (String s : bones) {
+    table.addColumn(s+"_x");
+    table.addColumn(s+"_y");
+    table.addColumn(s+"_z");
+    table.addColumn(s+"_Orientation_w");
+    table.addColumn(s+"_Orientation_x");
+    table.addColumn(s+"_Orientation_y");
+    table.addColumn(s+"_Orientation_z");
+  }
 
   kinect = new KinectPV2(this);
+
+  kinect.enableColorImg(true);
 
   //enable 3d  with (x,y,z) position
   kinect.enableSkeleton3DMap(true);
@@ -57,51 +61,52 @@ void setup() {
 void draw() {
   background(0);
 
+  image(kinect.getColorImage(), width-320, 0, 320, 240);
+
   //translate the scene to the center 
   pushMatrix();
-  translate(width/2, height/2, 0);
+  translate(width/2, height/2, depth);
   scale(zVal);
   rotateX(rotX);
 
-  ArrayList<KSkeleton> skeletonArray =  kinect.getSkeleton3d();
+  ArrayList skeletonArray =  kinect.getSkeleton3d();
 
   // if one or more body is tracked, loop through each body
-  // NOTE - this code will only work for one body, you will have to modify it to record more than one body
+  // NOTE - this code is meant to only track one body, modifications will be needed for multi-person recording
   for (int i = 0; i < skeletonArray.size(); i++) {
     KSkeleton skeleton = (KSkeleton) skeletonArray.get(i);
     if (skeleton.isTracked()) {
       KJoint[] joints = skeleton.getJoints();
 
       //draw different color for each hand state
-      drawHandState(joints[KinectPV2.JointType_HandRight]);
-      drawHandState(joints[KinectPV2.JointType_HandLeft]);
+      //  drawHandState(joints[KinectPV2.JointType_HandRight]);
+      //drawHandState(joints[KinectPV2.JointType_HandLeft]);
 
       //Draw body
-      color col  = skeleton.getIndexColor();
+      color col  = color(255, 105, 180);
       stroke(col);
-      strokeWeight(.01);
       drawBody(joints);
       // if we are recording send data to our data table
-      if(recording) {
+      if (recording) {
         recordData(joints);
       }
     }
   }
   popMatrix();
-  
-  // gives our text a red color
+
+  // gives the text a red color
   fill(255, 0, 0);
-  
+  textSize(40);
   // extremely basic interface to let the user know when they're recording
   // when the file is saved, etc
   if(saved) {
-    text("FILE SAVED", width-100, 50);
+    text("FILE SAVED", 50, 100);
   }
   if(recording) {
     text("RECORDING",50, 50);
   }
   if(poseNum != null) {
-    text("POSE NUMBER: " + poseNum, 50, 100);
+    text("POSE NUMBER: " + poseNum, 50, 150);
   }
 }
 
@@ -153,16 +158,21 @@ void drawBody(KJoint[] joints) {
 }
 
 void drawJoint(KJoint[] joints, int jointType) {
-  point(joints[jointType].getX(), joints[jointType].getY(), joints[jointType].getZ());
+  strokeWeight(2.0f + joints[jointType].getZ()*4);
+  point(joints[jointType].getX()*40, joints[jointType].getY()*40, joints[jointType].getZ()*40);
 }
 
 void drawBone(KJoint[] joints, int jointType1, int jointType2) {
-  point(joints[jointType2].getX(), joints[jointType2].getY(), joints[jointType2].getZ());
+  strokeWeight(1);
+  line(joints[jointType1].getX()*40, joints[jointType1].getY()*40, joints[jointType1].getZ()*40, joints[jointType2].getX()*40, joints[jointType2].getY()*40, joints[jointType2].getZ()*40);
+  strokeWeight(2.0f + joints[jointType2].getZ()*4);
+  point(joints[jointType2].getX()*40, joints[jointType2].getY()*40, joints[jointType2].getZ()*40);
 }
 
 void drawHandState(KJoint joint) {
   handState(joint.getState());
-  point(joint.getX(), joint.getY(), joint.getZ());
+  strokeWeight(5.0f + joint.getZ()*20);
+  point(joint.getX()*40, joint.getY()*40, joint.getZ()*40);
 }
 
 void handState(int handState) {
@@ -196,7 +206,8 @@ void recordData(KJoint[] joints){
   }
 }
 
-// this let's us interact with the program and tell it when we want to record, which position we want to record, and when to save the data
+// this let's us interact with the program and tell it when we want to record, 
+// which pose we want to record, and when to save the file
 void keyPressed(){
   if(key == 's') {
     // save the table and give it a timestamp
