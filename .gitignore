@@ -1,3 +1,4 @@
 *.csv
 /data
 .DS_Store
+*.pkl

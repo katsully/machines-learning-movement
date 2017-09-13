@@ -55,7 +55,7 @@ Once this is complete add C:\Python27\Scripts to your PATH, then close and reope
 In terminal type
 ```python -m pip install scikit-learn```
 
-To install numpy+mlk libraries download the numpy+mkl [file](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy). Again cd into downloads and ```pip install numpy‑1.11.3+mkl‑cp27‑cp27m‑win_amd64.whl```
+To install numpy+mlk libraries download the numpy+mkl [file](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy). I downloaded the 64 bit for Python 2.7. Then cd into downloads and ```pip install numpy‑1.11.3+mkl‑cp27‑cp27m‑win_amd64.whl```
 
 **If you get an error filename.whl is not supported wheel on this platform, rename the file to numpy‑1.11.3+mkl‑cp27‑none-any.whl and rerun pip install.
 OR you may be using a 32bit version of Python, to double check out the python interpreter and write
@@ -67,7 +67,7 @@ platform.architecture()[0]
 
 This will either print 32bit or 64bit. Obviously, if it says 32bit you'll need to download the appropriate wheel file.
 
-You'll also want to install scipy. To do so, download the whl file [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy) I downloaded the 64 bit for Python 2.7. Then cd into downloads and ```pip install scipy-0.19.1-cp27-cp27m-win_amd64.whl```
+You'll also want to install scipy. To do so, download the whl file [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy) Then cd into downloads and ```pip install scipy-0.19.1-cp27-cp27m-win_amd64.whl```
 
 
 ### Step 3: Make something cool!
