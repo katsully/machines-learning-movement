@@ -12,11 +12,16 @@ KinectPV2 kinect;
 
 // where we will store the data
 Table table;
+
+// a list of all points in the body that the Kinect tracks 
 String[] bones = { "SpineBase", "SpineMid", "Neck", "Head", "ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft",
     "ShoulderRight", "ElbowRight", "WristRight", "HandRight", "HipLeft", "KneeLeft", "AnkleLeft", "FootLeft", "HipRight", "KneeRight",
     "AnkleRight", "FootRight", "SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight" };
 
+// this will be used to let us know when we are recording
 boolean recording = false;
+
+// this will be used to let us know when we have saved the data
 boolean saved = false;
 Integer poseNum;
 
@@ -60,7 +65,8 @@ void draw() {
 
   ArrayList<KSkeleton> skeletonArray =  kinect.getSkeleton3d();
 
-  //individual JOINTS
+  // if one or more body is tracked, loop through each body
+  // NOTE - this code will only work for one body, you will have to modify it to record more than one body
   for (int i = 0; i < skeletonArray.size(); i++) {
     KSkeleton skeleton = (KSkeleton) skeletonArray.get(i);
     if (skeleton.isTracked()) {
@@ -75,15 +81,17 @@ void draw() {
       stroke(col);
       strokeWeight(.01);
       drawBody(joints);
+      // if we are recording send data to our data table
       if(recording) {
         recordData(joints);
       }
     }
   }
   popMatrix();
-
-
+  
+  // gives our text a red color
   fill(255, 0, 0);
+  
   // extremely basic interface to let the user know when they're recording
   // when the file is saved, etc
   if(saved) {
@@ -97,6 +105,7 @@ void draw() {
   }
 }
 
+// this is where Processing draws the skeleton
 void drawBody(KJoint[] joints) {
   drawBone(joints, KinectPV2.JointType_Head, KinectPV2.JointType_Neck);
   drawBone(joints, KinectPV2.JointType_Neck, KinectPV2.JointType_SpineShoulder);
@@ -173,6 +182,7 @@ void handState(int handState) {
   }
 }
 
+// sending each value for each joint to our data table
 void recordData(KJoint[] joints){
   TableRow newRow = table.addRow();
   for(int i=0; i<joints.length-1; i++){
@@ -186,6 +196,7 @@ void recordData(KJoint[] joints){
   }
 }
 
+// this let's us interact with the program and tell it when we want to record, which position we want to record, and when to save the data
 void keyPressed(){
   if(key == 's') {
     // save the table and give it a timestamp
