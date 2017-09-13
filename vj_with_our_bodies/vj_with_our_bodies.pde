@@ -1,3 +1,10 @@
+/*
+Kat Sullivan
+ Brooklyn Research 2017
+ github.com/katsully
+ */
+
+import KinectPV2.KJoint;
 import KinectPV2.*;
 import oscP5.*;
 import netP5.*;
@@ -6,31 +13,35 @@ OscP5 oscp5;
 NetAddress myRemoteLocation;
 KinectPV2 kinect;
 
-float zVal = 1000;
+int depth = 600;
+float zVal = 1;
 float rotX = PI;
 
-String pose ;
+String pose;
 
 boolean showBody = true;
 
-void setup(){
+void setup() {
   size(1024, 768, P3D);
-  
-  kinect = new KinectPV2(this); 
+
+  kinect = new KinectPV2(this);
+
+  kinect.enableColorImg(true);
+
+  //enable 3d  with (x,y,z) position
   kinect.enableSkeleton3DMap(true);
+
   kinect.init();
-  
+
   oscp5 = new OscP5(this, 9000);
-  // localhost
   myRemoteLocation = new NetAddress("127.0.0.1", 8000);
 }
 
 void oscEvent(OscMessage message) {
-  println("##received message##");
-  if(message.checkAddrPattern("/prediction") == true) {
-    println("IM HEREEEEEE");
+  println("~~received message~~");
+  if (message.checkAddrPattern("/prediction") == true) {
     println(message.get(0));
-     //come on and work: 
+    //come on and work: 
     pose = message.get(0).stringValue();
     return;
   }
@@ -41,42 +52,41 @@ void oscEvent(OscMessage message) {
 void draw() {
   background(0);
 
+  image(kinect.getColorImage(), width-320, 0, 320, 240);
+
   //translate the scene to the center 
   pushMatrix();
-  translate(width/2, height/2, 0);
+  translate(width/2, height/2, depth);
   scale(zVal);
   rotateX(rotX);
 
-  ArrayList<KSkeleton> skeletonArray =  kinect.getSkeleton3d();
+  ArrayList skeletonArray =  kinect.getSkeleton3d();
 
-  //individual JOINTS
+  // if one or more body is tracked, loop through each body
+  // NOTE - this code is meant to only track one body, modifications will be needed for multi-person recording
   for (int i = 0; i < skeletonArray.size(); i++) {
     KSkeleton skeleton = (KSkeleton) skeletonArray.get(i);
     if (skeleton.isTracked()) {
       KJoint[] joints = skeleton.getJoints();
 
       //draw different color for each hand state
-      drawHandState(joints[KinectPV2.JointType_HandRight]);
-      drawHandState(joints[KinectPV2.JointType_HandLeft]);
+      //  drawHandState(joints[KinectPV2.JointType_HandRight]);
+      //drawHandState(joints[KinectPV2.JointType_HandLeft]);
 
       //Draw body
-      color col  = skeleton.getIndexColor();
+      color col  = color(255, 105, 180);
       stroke(col);
-      strokeWeight(.01);
-      if(showBody) {
+      if (showBody) {
         drawBody(joints);
-      } 
+      }
+
       sendData(joints);
     }
   }
   popMatrix();
-
-
-  fill(255, 0, 0);
-  // extremely basic interface to let the user know when they're recording
-  // when the file is saved, etc
 }
 
+// this is where Processing draws the skeleton
 void drawBody(KJoint[] joints) {
   drawBone(joints, KinectPV2.JointType_Head, KinectPV2.JointType_Neck);
   drawBone(joints, KinectPV2.JointType_Neck, KinectPV2.JointType_SpineShoulder);
@@ -124,16 +134,21 @@ void drawBody(KJoint[] joints) {
 }
 
 void drawJoint(KJoint[] joints, int jointType) {
-  point(joints[jointType].getX(), joints[jointType].getY(), joints[jointType].getZ());
+  strokeWeight(2.0f + joints[jointType].getZ()*4);
+  point(joints[jointType].getX()*40, joints[jointType].getY()*40, joints[jointType].getZ()*40);
 }
 
 void drawBone(KJoint[] joints, int jointType1, int jointType2) {
-  point(joints[jointType2].getX(), joints[jointType2].getY(), joints[jointType2].getZ());
+  strokeWeight(1);
+  line(joints[jointType1].getX()*40, joints[jointType1].getY()*40, joints[jointType1].getZ()*40, joints[jointType2].getX()*40, joints[jointType2].getY()*40, joints[jointType2].getZ()*40);
+  strokeWeight(2.0f + joints[jointType2].getZ()*4);
+  point(joints[jointType2].getX()*40, joints[jointType2].getY()*40, joints[jointType2].getZ()*40);
 }
 
 void drawHandState(KJoint joint) {
   handState(joint.getState());
-  point(joint.getX(), joint.getY(), joint.getZ());
+  strokeWeight(5.0f + joint.getZ()*20);
+  point(joint.getX()*40, joint.getY()*40, joint.getZ()*40);
 }
 
 void handState(int handState) {
@@ -153,9 +168,9 @@ void handState(int handState) {
   }
 }
 
-void sendData(KJoint[] joints){
+void sendData(KJoint[] joints) {
   OscMessage newMessage = new OscMessage("/skeletal_data");
-  for(int i=0; i<joints.length-1; i++){
+  for (int i=0; i<joints.length-1; i++) {
     newMessage.add(joints[i].getX());
     newMessage.add(joints[i].getY());
     newMessage.add(joints[i].getZ());
@@ -163,12 +178,7 @@ void sendData(KJoint[] joints){
     newMessage.add(joints[i].getOrientation().getX());
     newMessage.add(joints[i].getOrientation().getY());
     newMessage.add(joints[i].getOrientation().getZ());
-    println(joints[i].getOrientation().getZ());
   }
   oscp5.send(newMessage, myRemoteLocation);
   println(newMessage);
 }
-
-void keyPressed(){
-}
-  
