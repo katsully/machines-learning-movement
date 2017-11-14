@@ -33,9 +33,19 @@ Next, we'll be using KinectRecordingMovement.pde file inside the KinectRecording
 
 We'll be using the Kinect 2 for this part so you'll need a Windows computer and [Processing](https://processing.org/download/). 
 
+At this point, it may be a good idea to see if your computer is running 32 bit or 64 bit. To do this, go to Control Panel -> System and Security -> System. Under System Type, it should way whether you have a 32-bit Operating System or 64-bit Operating System. This will be important to know moving forward!
+
 If the KinectPV2 object is underlined in red, you also need to install the KinectPV2 library which can be installed in the Processing IDE by going to Sketch->Import Library->Add Library.
 
 **Note, when running this Processing sketch, it might take a minute or two before you see anything.
+
+##### Recording Instructions
+1. Press 1
+2. Make a pose and hit record (r)
+3. Stop recording (r)
+4. Repeat steps 2 and 3 with a few of your partners doing the same pose from step 2
+5. Repeat steps 1-4 but press 2 or 3 to record data for new poses!
+6. Hit save (s)
 
 ### Step 2: Let the Machine Learn!
 First, we need to make sure Python has been installed. (This is only for Window users, Python comes standard in Mac).
