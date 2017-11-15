@@ -12,9 +12,6 @@ from sklearn.externals import joblib
 def hasNumbers(inputString):
      return bool(re.search(r'\d', inputString))
 
-#------OSC Server-------------------------------------#
-receive_address = '127.0.0.1', 9001
-
 features = []
 test_data = []
 test_poses = []
@@ -22,7 +19,7 @@ labels = []
 currPose = ""
 
 # open our csv file 
-with open('KinectRecordingMovement/data/test.csv', 'rb') as inp:
+with open('../KinectRecordingMovement/data/test.csv', 'rt') as inp:
 	# keep track of what row we're at
 	counter = 0
 	for row in csv.reader(inp):
@@ -51,7 +48,7 @@ predictions = clf.predict(test_data)
 # # print test_emotions
 truths = [x==y for x, y in zip(predictions, test_poses)]
 # # print truths
-print float(sum(truths))/float(len(truths))
+print(float(sum(truths))/float(len(truths)))
 
 # export our tree
 joblib.dump(clf, 'machinelearning.pkl')

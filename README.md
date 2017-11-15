@@ -79,6 +79,17 @@ You'll also want to install scipy. To do so, download the whl file [here](http:/
 
 Finally, open the movement_machine_learning.py (in the classifer folder) file with a text editor.
 
+In terminal, cd to the correct folder and run
+
+```python movement_machine_learning.py```
+
+OR
+
+```python3 movement_machine_learning.py```
+
+if you have both python2 and python3 on your machine.
+
+
 
 ### Step 3: Make something cool!
 For this step we'll be using the files
