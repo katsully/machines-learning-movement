@@ -8,7 +8,7 @@ In the past several years, Machine Learning has been the buzzword, from the new 
 Here's are some awesome artists using Machine Learning in their practice:
 
 [Ross Goodwin](http://rossgoodwin.com/)<br>
-[Kyle Mcdonald](https://medium.com/@kcimc/a-return-to-machine-learning-2de3728558eb)<br>
+[Kyle McDonald](https://medium.com/@kcimc/a-return-to-machine-learning-2de3728558eb)<br>
 [Gene Kogan](https://medium.com/@genekogan/machine-learning-for-artists-e93d20fdb097)
 
 These artists feed their algorithms images and words to create pieces completely unique. But as a movement practioner, I wondered what the role of movement had in this new exciting world. 
