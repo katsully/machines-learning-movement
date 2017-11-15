@@ -17,9 +17,12 @@ int depth = 600;
 float zVal = 1;
 float rotX = PI;
 
-String pose;
+String pose=";
 
 boolean showBody = true;
+color col;
+
+int interval = 0;
 
 void setup() {
   size(1024, 768, P3D);
@@ -41,12 +44,9 @@ void oscEvent(OscMessage message) {
   println("~~received message~~");
   if (message.checkAddrPattern("/prediction") == true) {
     println(message.get(0));
-    //come on and work: 
     pose = message.get(0).stringValue();
     return;
   }
-  println(message.addrPattern());
-  println(message.typetag());
 }
 
 void draw() {
@@ -74,13 +74,24 @@ void draw() {
       //drawHandState(joints[KinectPV2.JointType_HandLeft]);
 
       //Draw body
-      color col  = color(255, 105, 180);
+      if(pose.equals("POSE 1")) {
+        col = color(255,0,0);
+      } else if(pose.equals("POSE 2")) {
+        col = color(0,255,0);
+      } else if(pose.equals("POSE 3")) {
+        col = color(0,0,255);
+      } else {
+        col  = color(255, 105, 180);
+      }
       stroke(col);
       if (showBody) {
         drawBody(joints);
       }
 
-      sendData(joints);
+      if(interval % 100 == 0) {
+        sendData(joints);
+      }
+      interval++;
     }
   }
   popMatrix();
@@ -180,5 +191,4 @@ void sendData(KJoint[] joints) {
     newMessage.add(joints[i].getOrientation().getZ());
   }
   oscp5.send(newMessage, myRemoteLocation);
-  println(newMessage);
 }

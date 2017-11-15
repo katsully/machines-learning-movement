@@ -7,20 +7,17 @@ import argparse
 import time
 import random
 
-def print_click(*params):
-	body_language = list(params[2:])
-	if "N/A" in body_language:
-		return
-	prediction  = clf.predict(poses)
-	msg = osc_message_builder.OscMessageBuilder(address="/prediction")
-	pred_string = str(prediction[0], 'utf-8')
-	print (pred_string)
-	msg.add_arg(pred_string)
-	msg = msg.build()
-	client.send(msg)
+def print_click(unused_addr, *args):
+	pose = args
+	pred = clf.predict([pose])
+	print(pred)
+	client.send_message("/prediction", pred)
 
 if __name__ == "__main__":
-	clf = joblib.load('/classifer/machinelearning.pkl')
+	clf = joblib.load('classifer/machinelearning.pkl')
+
+	# needs to be 9000 for beginning loop
+	client = udp_client.SimpleUDPClient("127.0.0.1", 9000)
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--ip", default="127.0.0.1",
@@ -29,21 +26,12 @@ if __name__ == "__main__":
 		help="The port the OSC server is listening on")
 	args = parser.parse_args()
 
-	# needs to be 9000 for beginning loop
-	client = udp_client.UDPClient(args.ip, 9000)
-
 	dispatcher = dispatcher.Dispatcher()
-	dispatcher.map("/skeletal_data", print_click, "Click")
+	dispatcher.map("/skeletal_data", print_click)
 
 	# needs to be port 9000 to receive data from processing
 	server = osc_server.ThreadingOSCUDPServer(
 		(args.ip, 8000), dispatcher)
 	print("Serving on {}".format(server.server_address))
-	for x in range(5):
-		msg = osc_message_builder.OscMessageBuilder(address="/prediction")
-		msg.add_arg(random.random())
-		msg = msg.build()
-		client.send(msg)
-		time.sleep(1)
 	server.serve_forever()
 

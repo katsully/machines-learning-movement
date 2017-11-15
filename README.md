@@ -62,7 +62,13 @@ Once this is complete add C:\Python27\Scripts to your PATH, then close and reope
 In terminal type
 ```python -m pip install scikit-learn```
 
+If you are on a mac type
+```pip install scikit-learn```
+
 To install numpy+mlk libraries download the numpy+mkl [file](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy). I downloaded the 64 bit for Python 3.5. Then cd into downloads and ```pip install numpy‑1.11.3+mkl‑cp35‑cp35m‑win_amd64.whl```
+
+If you are on a mac type
+```pip install nltk```
 
 **If you get an error filename.whl is not supported wheel on this platform, you may be using a 32bit version of Python, to double check out the python interpreter and write
 
@@ -77,7 +83,7 @@ Else, rename the file to numpy‑1.11.3+mkl‑cp35‑none-any.whl and rerun pip 
 
 You'll also want to install scipy. To do so, download the whl file [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy) Then cd into downloads and ```pip install scipy-0.19.1-cp35-cp35m-win_amd64.whl```
 
-Finally, open the movement_machine_learning.py (in the classifer folder) file with a text editor.
+Finally, open the movement_machine_learning.py (in the classifer folder) file with a text editor (ie Sublime Text).
 
 In terminal, cd to the correct folder and run
 
@@ -99,6 +105,10 @@ For the processing sketch you'll want to install the oscp5 library, which you ca
 To use the pythonosc libray do ```python3 -m pip install python-osc```
 
 ```python3 -m pip install sklearn```
+
+**If you only have python3 installed on your machine, replace python3 with python.
+
+Run vj_with_our_bodies.pde and python-osc.py at the same time for some Machine Learning magic!
 
 
 
