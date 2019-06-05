@@ -6,18 +6,14 @@ Kat Sullivan
 
 import KinectPV2.KJoint;
 import KinectPV2.*;
-import oscP5.*;
-import netP5.*;
 
-OscP5 oscp5;
-NetAddress myRemoteLocation;
 KinectPV2 kinect;
 
 int depth = 600;
 float zVal = 1;
 float rotX = PI;
 
-String pose=";
+int pose;
 
 boolean showBody = true;
 color col;
@@ -35,18 +31,6 @@ void setup() {
   kinect.enableSkeleton3DMap(true);
 
   kinect.init();
-
-  oscp5 = new OscP5(this, 9000);
-  myRemoteLocation = new NetAddress("127.0.0.1", 8000);
-}
-
-void oscEvent(OscMessage message) {
-  println("~~received message~~");
-  if (message.checkAddrPattern("/prediction") == true) {
-    println(message.get(0));
-    pose = message.get(0).stringValue();
-    return;
-  }
 }
 
 void draw() {
@@ -74,11 +58,14 @@ void draw() {
       //drawHandState(joints[KinectPV2.JointType_HandLeft]);
 
       //Draw body
-      if(pose.equals("POSE 1")) {
+      // if doing the first pose, the body will be red
+      if(pose == 0) {
         col = color(255,0,0);
-      } else if(pose.equals("POSE 2")) {
+       // if doing the second pose, the body will be green
+      } else if(pose == 1) {
         col = color(0,255,0);
-      } else if(pose.equals("POSE 3")) {
+        // if doing the third pose, the body will be blue
+      } else if(pose == 2) {
         col = color(0,0,255);
       } else {
         col  = color(255, 105, 180);
@@ -180,15 +167,66 @@ void handState(int handState) {
 }
 
 void sendData(KJoint[] joints) {
-  OscMessage newMessage = new OscMessage("/skeletal_data");
-  for (int i=0; i<joints.length-1; i++) {
-    newMessage.add(joints[i].getX());
-    newMessage.add(joints[i].getY());
-    newMessage.add(joints[i].getZ());
-    newMessage.add(joints[i].getOrientation().getW());
-    newMessage.add(joints[i].getOrientation().getX());
-    newMessage.add(joints[i].getOrientation().getY());
-    newMessage.add(joints[i].getOrientation().getZ());
-  }
-  oscp5.send(newMessage, myRemoteLocation);
+  // To keep everything relative and disregard differences in size amoung users, make all position information in relation to the base of the spine
+  // normalize data 
+  PVector spineBase = joints[KinectPV2.JointType_SpineBase].getPosition();
+  PVector normHead = joints[KinectPV2.JointType_Head].getPosition().sub(spineBase);
+  PVector normSpineMid = joints[KinectPV2.JointType_SpineMid].getPosition().sub(spineBase);
+  PVector normHipLeft = joints[KinectPV2.JointType_HipLeft].getPosition().sub(spineBase);
+  PVector normHipRight = joints[KinectPV2.JointType_HipRight].getPosition().sub(spineBase);
+  PVector normSpineShoulder = joints[KinectPV2.JointType_SpineShoulder].getPosition().sub(spineBase);
+  PVector normWristLeft = joints[KinectPV2.JointType_WristLeft].getPosition().sub(spineBase);
+  PVector normWristRight = joints[KinectPV2.JointType_WristRight].getPosition().sub(spineBase);
+  PVector normElbowLeft = joints[KinectPV2.JointType_ElbowLeft].getPosition().sub(spineBase);
+  PVector normElbowRight = joints[KinectPV2.JointType_ElbowRight].getPosition().sub(spineBase);
+  PVector normShoulderLeft = joints[KinectPV2.JointType_ShoulderLeft].getPosition().sub(spineBase);
+  PVector normShoulderRight = joints[KinectPV2.JointType_ShoulderRight].getPosition().sub(spineBase);
+  PVector normKneeLeft = joints[KinectPV2.JointType_KneeLeft].getPosition().sub(spineBase);
+  PVector normKneeRight = joints[KinectPV2.JointType_KneeRight].getPosition().sub(spineBase);
+  PVector normAnkleLeft = joints[KinectPV2.JointType_AnkleLeft].getPosition().sub(spineBase);
+  PVector normAnkleRight = joints[KinectPV2.JointType_AnkleRight].getPosition().sub(spineBase);
+
+  ArrayList<Float> features = new ArrayList<Float>();
+  
+  // Feature 1: dist between spine base and head
+  features.add(normHead.dist(spineBase));
+  
+  // Feature 2-4: avg pos between spineMid, hipLeft, and hipRight
+  PVector hipAvg = (normSpineMid.add(normHipLeft).add(normHipRight)).div(3);
+  features.add(hipAvg.x);
+  features.add(hipAvg.y);
+  features.add(hipAvg.z);
+  
+  // Feature 5-13:  position of the torso joints
+  features.add(normSpineShoulder.x);
+  features.add(normSpineShoulder.y);
+  features.add(normSpineShoulder.z);
+  features.add(normSpineMid.x);
+  features.add(normSpineMid.y);
+  features.add(normSpineMid.z);
+  features.add(spineBase.x);
+  features.add(spineBase.y);
+  features.add(spineBase.z);
+  
+  // Feature 14-25: avg between wrist, elbow, and shoulder (left and right) and hip, knee, and ankle (left and right)
+  PVector leftArmAvg = (normWristLeft.add(normElbowLeft).add(normShoulderLeft)).div(3);
+  features.add(leftArmAvg.x);
+  features.add(leftArmAvg.y);
+  features.add(leftArmAvg.z);
+  PVector rightArmAvg = (normWristRight.add(normElbowRight).add(normShoulderRight)).div(3);
+  features.add(rightArmAvg.x);
+  features.add(rightArmAvg.y);
+  features.add(rightArmAvg.z);
+  PVector leftLegAvg = (normHipLeft.add(normKneeLeft).add(normAnkleLeft)).div(3);
+  features.add(leftLegAvg.x);
+  features.add(leftLegAvg.y);
+  features.add(leftLegAvg.z);
+  PVector rightLegAvg = (normHipRight.add(normKneeRight).add(normAnkleRight)).div(3);
+  features.add(rightLegAvg.x);
+  features.add(rightLegAvg.y);
+  features.add(rightLegAvg.z);
+  
+  pose = classify(features);
 }
+
+// ADD YOUR NEW CODE HERE!!!!!!!!

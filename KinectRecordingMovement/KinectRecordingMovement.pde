@@ -13,11 +13,6 @@ KinectPV2 kinect;
 // where we will store the data
 Table table;
 
-// a list of all points in the body that the Kinect tracks
-String[] bones = { "SpineBase", "SpineMid", "Neck", "Head", "ShoulderLeft", "ElbowLeft", "WristLeft", "HandLeft", 
-  "ShoulderRight", "ElbowRight", "WristRight", "HandRight", "HipLeft", "KneeLeft", "AnkleLeft", "FootLeft", "HipRight", "KneeRight", 
-  "AnkleRight", "FootRight", "SpineShoulder", "HandTipLeft", "ThumbLeft", "HandTipRight", "ThumbRight" };
-
 // this will be used to let us know when we are recording
 boolean recording = false;
 
@@ -37,15 +32,9 @@ void setup() {
   size(1024, 768, P3D);
 
   table = new Table();
-
-  for (String s : bones) {
-    table.addColumn(s+"_x");
-    table.addColumn(s+"_y");
-    table.addColumn(s+"_z");
-    table.addColumn(s+"_Orientation_w");
-    table.addColumn(s+"_Orientation_x");
-    table.addColumn(s+"_Orientation_y");
-    table.addColumn(s+"_Orientation_z");
+  table.addColumn("Label");
+  for (int i=1; i<=25; i++) {
+    table.addColumn("Feature " + i);
   }
 
   kinect = new KinectPV2(this);
@@ -77,10 +66,6 @@ void draw() {
     KSkeleton skeleton = (KSkeleton) skeletonArray.get(i);
     if (skeleton.isTracked()) {
       KJoint[] joints = skeleton.getJoints();
-
-      //draw different color for each hand state
-      //  drawHandState(joints[KinectPV2.JointType_HandRight]);
-      //drawHandState(joints[KinectPV2.JointType_HandLeft]);
 
       //Draw body
       color col  = color(255, 105, 180);
@@ -194,16 +179,77 @@ void handState(int handState) {
 
 // sending each value for each joint to our data table
 void recordData(KJoint[] joints){
+  // To keep everything relative and disregard differences in size amoung users, make all position information in relation to the base of the spine
+  // normalize data 
+  PVector spineBase = joints[KinectPV2.JointType_SpineBase].getPosition();
+  PVector normHead = joints[KinectPV2.JointType_Head].getPosition().sub(spineBase);
+  PVector normSpineMid = joints[KinectPV2.JointType_SpineMid].getPosition().sub(spineBase);
+  PVector normHipLeft = joints[KinectPV2.JointType_HipLeft].getPosition().sub(spineBase);
+  PVector normHipRight = joints[KinectPV2.JointType_HipRight].getPosition().sub(spineBase);
+  PVector normSpineShoulder = joints[KinectPV2.JointType_SpineShoulder].getPosition().sub(spineBase);
+  PVector normWristLeft = joints[KinectPV2.JointType_WristLeft].getPosition().sub(spineBase);
+  PVector normWristRight = joints[KinectPV2.JointType_WristRight].getPosition().sub(spineBase);
+  PVector normElbowLeft = joints[KinectPV2.JointType_ElbowLeft].getPosition().sub(spineBase);
+  PVector normElbowRight = joints[KinectPV2.JointType_ElbowRight].getPosition().sub(spineBase);
+  PVector normShoulderLeft = joints[KinectPV2.JointType_ShoulderLeft].getPosition().sub(spineBase);
+  PVector normShoulderRight = joints[KinectPV2.JointType_ShoulderRight].getPosition().sub(spineBase);
+  PVector normKneeLeft = joints[KinectPV2.JointType_KneeLeft].getPosition().sub(spineBase);
+  PVector normKneeRight = joints[KinectPV2.JointType_KneeRight].getPosition().sub(spineBase);
+  PVector normAnkleLeft = joints[KinectPV2.JointType_AnkleLeft].getPosition().sub(spineBase);
+  PVector normAnkleRight = joints[KinectPV2.JointType_AnkleRight].getPosition().sub(spineBase);
+
+  //// vertex1 = (head + shoulderCenter) / 2
+  //vertex1.set(joints[KinectPV2.JointType_Head].getPosition().add(joints[KinectPV2.JointType_SpineShoulder].getPosition()).div(2));
+  //// vertex2 = (shoulderRight + elbowRight + wristRight + handRight) / 4
+  //vertex2.set(joints[KinectPV2.JointType_ShoulderRight].getPosition().add(joints[KinectPV2.JointType_ElbowRight].getPosition()).add(joints[KinectPV2.JointType_WristRight].getPosition()).add(joints[KinectPV2.JointType_HandRight].getPosition()).div(4));
+  //// vertex3 = (shoulderLeft + elbowLeft + wristLeft + handLeft) / 4
+  //vertex3.set(joints[KinectPV2.JointType_ShoulderLeft].getPosition().add(joints[KinectPV2.JointType_ElbowLeft].getPosition()).add(joints[KinectPV2.JointType_WristLeft].getPosition()).add(joints[KinectPV2.JointType_HandLeft].getPosition()).div(4));
+  //// vertex4 = (hipRight + kneeRight + ankleRight + footRight) / 4
+  //vertex4.set(joints[KinectPV2.JointType_HipRight].getPosition().add(joints[KinectPV2.JointType_KneeRight].getPosition()).add(joints[KinectPV2.JointType_AnkleRight].getPosition()).add(joints[KinectPV2.JointType_FootRight].getPosition()).div(4));
+  //// vertex5 = (hipLeft + kneeLeft + ankleLeft + footLeft) / 4
+  //vertex5.set(joints[KinectPV2.JointType_HipLeft].getPosition().add(joints[KinectPV2.JointType_KneeLeft].getPosition()).add(joints[KinectPV2.JointType_AnkleLeft].getPosition()).add(joints[KinectPV2.JointType_FootLeft].getPosition()).div(4));
   TableRow newRow = table.addRow();
-  for(int i=0; i<joints.length-1; i++){
-    newRow.setFloat(bones[i] + "_x", joints[i].getX());
-    newRow.setFloat(bones[i] + "_y", joints[i].getY());
-    newRow.setFloat(bones[i] + "_z", joints[i].getZ());
-    newRow.setFloat(bones[i] + "_Orientation_w", joints[i].getOrientation().getW());
-    newRow.setFloat(bones[i] + "_Orientation_x", joints[i].getOrientation().getX());
-    newRow.setFloat(bones[i] + "_Orientation_y", joints[i].getOrientation().getY());
-    newRow.setFloat(bones[i] + "_Orientation_z", joints[i].getOrientation().getZ());
-  }
+  
+  // What is the label?
+  newRow.setString("Label", "Pose " + poseNum);
+  
+  // Feature 1: dist between spine base and head
+  newRow.setFloat("Feature 1", normHead.dist(spineBase));
+  
+  // Feature 2-4: avg pos between spineMid, hipLeft, and hipRight
+  PVector hipAvg = (normSpineMid.add(normHipLeft).add(normHipRight)).div(3);
+  newRow.setFloat("Feature 2", hipAvg.x);
+  newRow.setFloat("Feature 3", hipAvg.y);
+  newRow.setFloat("Feature 4", hipAvg.z);
+  
+  // Feature 5-13:  position of the torso joints
+  newRow.setFloat("Feature 5", normSpineShoulder.x);
+  newRow.setFloat("Feature 6", normSpineShoulder.y);
+  newRow.setFloat("Feature 7", normSpineShoulder.z);
+  newRow.setFloat("Feature 8", normSpineMid.x);
+  newRow.setFloat("Feature 9", normSpineMid.y);
+  newRow.setFloat("Feature 10", normSpineMid.z);
+  newRow.setFloat("Feature 11", spineBase.x);
+  newRow.setFloat("Feature 12", spineBase.y);
+  newRow.setFloat("Feature 13", spineBase.z);
+  
+  // Feature 14-25: avg between wrist, elbow, and shoulder (left and right) and hip, knee, and ankle (left and right)
+  PVector leftArmAvg = (normWristLeft.add(normElbowLeft).add(normShoulderLeft)).div(3);
+  newRow.setFloat("Feature 14", leftArmAvg.x);
+  newRow.setFloat("Feature 15", leftArmAvg.y);
+  newRow.setFloat("Feature 16", leftArmAvg.z);
+  PVector rightArmAvg = (normWristRight.add(normElbowRight).add(normShoulderRight)).div(3);
+  newRow.setFloat("Feature 17", rightArmAvg.x);
+  newRow.setFloat("Feature 18", rightArmAvg.y);
+  newRow.setFloat("Feature 19", rightArmAvg.z);
+  PVector leftLegAvg = (normHipLeft.add(normKneeLeft).add(normAnkleLeft)).div(3);
+  newRow.setFloat("Feature 20", leftLegAvg.x);
+  newRow.setFloat("Feature 21", leftLegAvg.y);
+  newRow.setFloat("Feature 22", leftLegAvg.z);
+  PVector rightLegAvg = (normHipRight.add(normKneeRight).add(normAnkleRight)).div(3);
+  newRow.setFloat("Feature 23", rightLegAvg.x);
+  newRow.setFloat("Feature 24", rightLegAvg.y);
+  newRow.setFloat("Feature 25", rightLegAvg.z);
 }
 
 // this let's us interact with the program and tell it when we want to record, 
@@ -215,19 +261,19 @@ void keyPressed(){
     saved = true;
   } else if(key == 'r') {
     recording = !recording;
-    TableRow newRow = table.addRow(); 
-    newRow.setString("SpineBase_x", "NEW RECORDING"); 
+   // TableRow newRow = table.addRow(); 
+   // newRow.setString("SpineBase_x", "NEW RECORDING"); 
   } else if(key == '1') {
     poseNum = 1;
-    TableRow newRow = table.addRow();
-    newRow.setString("SpineBase_x", "POSE 1");
+   // TableRow newRow = table.addRow();
+   // newRow.setString("SpineBase_x", "POSE 1");
   } else if(key == '2') {
     poseNum = 2;
-    TableRow newRow = table.addRow();
-    newRow.setString("SpineBase_x", "POSE 2");
+   // TableRow newRow = table.addRow();
+   // newRow.setString("SpineBase_x", "POSE 2");
   } else if(key == '3') {
     poseNum = 3;
-    TableRow newRow = table.addRow();
-    newRow.setString("SpineBase_x", "POSE 3");
+   // TableRow newRow = table.addRow();
+   // newRow.setString("SpineBase_x", "POSE 3");
   }
 }
