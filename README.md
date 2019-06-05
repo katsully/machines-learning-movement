@@ -60,7 +60,7 @@ Install sklearn by entering this into the console:
 
 Once python and sklearn are installed we'll be using the movement\_machine\_learning.py file inside the clasifier folder. 
 
-Open the movement\_machine\_learning.py file with a text editor (ie Sublime Text). Change the .csv file to match your file name on line 16.
+Open the movement\_machine\_learning.py file with a text editor (ie [Sublime Text](https://www.sublimetext.com/3). Change the .csv file to match your file name on line 16.
 
 In Command Prompt, cd to the correct folder (ie your classifier folder) and run
 
@@ -71,7 +71,7 @@ OR
 ```python3 movement_machine_learning.py```
 if you have both python2 and python3 on your machine.
 
-This code will also convert our classifying tree into java via the magic of Github user [papkov's](https://github.com/papkov) code. 
+This code will also convert our classifying tree into java via the magic of Github user [papkov's](https://github.com/papkov) code. This will appear as a .java file inside the classifier folder.
 
 ### Step 3: Make something cool!
 For this step we'll be using the file vj\_with\_our\_bodies.pde inside the vj\_with\_our\_bodies folder.
