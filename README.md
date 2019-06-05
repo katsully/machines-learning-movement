@@ -1,6 +1,6 @@
 # Machines Learning Movement
 
-## ITP Camp 2017
+## ITP Camp 2019
 
 #### Intro
 In the past several years, Machine Learning has been the buzzword, from the new algorithms Netflix and Amazon use to recommend you products to the latest technical intervention/disruption to the art world. 
@@ -40,7 +40,7 @@ If the KinectPV2 object is underlined in red, you also need to install the Kinec
 **Note, when running this Processing sketch, it might take a minute or two before you see anything.
 
 ##### Recording Instructions
-1. Press 1
+1. Press 1 for Pose 1
 2. Make a pose and hit record (r)
 3. Stop recording (r)
 4. Repeat steps 2 and 3 with a few of your partners doing the same pose from step 2
@@ -48,37 +48,37 @@ If the KinectPV2 object is underlined in red, you also need to install the Kinec
 6. Hit save (s)
 
 ### Step 2: Let the Machine Learn!
+Step 2 can be done on a Windows or a Mac.
+
 First, we need to make sure Python has been installed. (This is only for Window users, Python comes standard in Mac).
 Open the Command Prompt and type Python. If it says Python 3.x.xx ...., you're all set! If not, please download [Python](https://www.python.org/downloads/windows). We want the 3.7.3 release, and use the Windows x86-64 executable installer (scroll down). Open the installer and <b>make sure the "Add Python 3.7 to PATH" is selected</b>. Click Install Now. You'll need to close and reopen Command Prompt after installation.
 
 **If you have both python2 and python3, the trick is to rename the python3 executable to python3.
 
-Window Users: In Command Prompt, type
+Install sklearn by entering this into the console:
 ```pip3 install scikit-learn```
 
-If you are on a mac type
-```pip install scikit-learn```
+Once python and sklearn are installed we'll be using the movement\_machine\_learning.py file inside the clasifier folder. 
 
-For this step we'll be using the movement\_machine\_learning.py file inside the clasifier folder. 
+Open the movement\_machine\_learning.py file with a text editor (ie Sublime Text). Change the .csv file to match your file name on line 16.
 
-Finally, open the movement\_machine\_learning.py file with a text editor (ie Sublime Text). Change the .csv file to match your file name on line 16.
-
-In Command Prompt, cd to the correct folder and run
+In Command Prompt, cd to the correct folder (ie your classifier folder) and run
 
 ```python movement_machine_learning.py```
 
 OR
 
 ```python3 movement_machine_learning.py```
-
 if you have both python2 and python3 on your machine.
 
-This code will also convert classifying tree into java via the magic of Github user [papkov](https://github.com/papkov). 
+This code will also convert our classifying tree into java via the magic of Github user [papkov's](https://github.com/papkov) code. 
 
 ### Step 3: Make something cool!
 For this step we'll be using the file vj\_with\_our\_bodies.pde inside the vj\_with\_our\_bodies folder.
 
-Run vj_with_our_bodies.pde for some Machine Learning magic!
+The code will be broken because we need to add our new classify function. Add your classify function at the bottom where it says, "Add your new code here!"
+
+Run vj\_with\_our\_bodies.pde with the Kinect for some Machine Learning magic!
 
 
 
