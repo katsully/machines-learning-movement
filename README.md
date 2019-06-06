@@ -38,8 +38,6 @@ At this point, it may be a good idea to see if your computer is running 32 bit o
 
 If the KinectPV2 object is underlined in red, you also need to install the KinectPV2 library which can be installed in the Processing IDE by going to Sketch->Import Library->Add Library.
 
-**Note, when running this Processing sketch, it might take a minute or two before you see anything.
-
 ##### Recording Instructions
 1. Press 1 for Pose 1
 2. Make a pose and hit record (r)
