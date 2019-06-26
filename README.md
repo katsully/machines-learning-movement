@@ -9,7 +9,7 @@ Here's are some awesome artists using Machine Learning in their practice:
 
 [Ross Goodwin](http://rossgoodwin.com/)<br>
 [Lauren McCarthy](http://lauren-mccarthy.com/)<br>
-[Kyle McDonald](https://medium.com/@kcimc/a-return-to-machine-learning-2de3728558eb)<br>
+[Kyle McDonald](https://medium.com/@kcimc/a-return-to-machine-learning-2de3728558eb) - [Discrete Figures](https://www.youtube.com/watch?v=hauXQQhwbgM)<br> 
 [Gene Kogan](https://medium.com/@genekogan/machine-learning-for-artists-e93d20fdb097)
 
 These artists feed their algorithms images and words to create pieces completely unique. But as a movement practitioner, I wondered what the role of movement had in this new exciting world. 
